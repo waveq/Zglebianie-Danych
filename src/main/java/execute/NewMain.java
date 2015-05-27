@@ -21,6 +21,8 @@ public class NewMain {
 
 	private final String FILE_INPUT = "file.input";
 	private final String FILE_OUTPUT = "file.output";
+	private final String OUTPUT_PATH = "OUTPUT/";
+	private final String INPUT_PATH = "INPUT/";
 	private final String UTF8 = "UTF-8";
 
 	private String[] stopWords = {"-", " ", ""};
@@ -46,7 +48,7 @@ public class NewMain {
 
 	private void writeOutWords() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), UTF8));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(OUTPUT_PATH +output), UTF8));
 			writeLine(writer, "NUMBER OF WORDS: " + sortedClassifiedWords.entrySet().size());
 			writer.newLine();
 			int i =0;
@@ -85,7 +87,7 @@ public class NewMain {
 	private ArrayList<String> fetchWordsFromFile() {
 		ArrayList<String> allWordsList = new ArrayList<>();
 		try {
-			FileInputStream fstream = new FileInputStream(input);
+			FileInputStream fstream = new FileInputStream(INPUT_PATH+input);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
