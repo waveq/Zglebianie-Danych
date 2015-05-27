@@ -10,7 +10,8 @@ import java.util.*;
  */
 public class NewMain {
 
-	String input;
+	String inputFileName;
+	String inputAbsolute;
 	String output;
 	PropertyRetriever pr;
 	Map<String, Long> classifiedWords;
@@ -19,10 +20,14 @@ public class NewMain {
 	ValueComparator comparator;
 	long maxOccurances = 0;
 
-	private final String FILE_INPUT = "file.input";
-	private final String FILE_OUTPUT = "file.output";
+	private final String FILE_INPUT_PROPERTY = "file.input";
+	private final String FILE_OUTPUT_PROPERTY = "file.output";
 	private final String OUTPUT_PATH = "OUTPUT/";
 	private final String INPUT_PATH = "INPUT/";
+	private final String OUT_PREFIX = "OUT ";
+
+
+
 	private final String UTF8 = "UTF-8";
 
 	private String[] stopWords = {"-", " ", ""};
@@ -32,23 +37,33 @@ public class NewMain {
 	}
 
 	public boolean start() {
-		setUpProperties();
-		System.out.println("Fetching words from: " + input);
+		setFileNamesFromProperties();
+		setPathForOutput();
+		setPathForInput();
+
+		System.out.println("Fetching words from: " + inputAbsolute);
 		allWords = fetchWordsFromFile();
 		classifiedWords = countWords();
 
 		comparator =  new ValueComparator(classifiedWords);
 		sortedClassifiedWords = new TreeMap<>(comparator);
 		sortedClassifiedWords.putAll(classifiedWords);
-		output = "OUT "+input;
+
 		System.out.println("Writing words to: " + output);
 		writeOutWords();
 		return true;
 	}
 
+	private void setPathForOutput() {
+		output = OUTPUT_PATH + OUT_PREFIX + inputFileName;
+	}
+
+	private void setPathForInput() {
+		inputAbsolute = INPUT_PATH + inputFileName;
+	}
 	private void writeOutWords() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(OUTPUT_PATH +output), UTF8));
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), UTF8));
 			writeLine(writer, "NUMBER OF WORDS: " + sortedClassifiedWords.entrySet().size());
 			writer.newLine();
 			int i =0;
@@ -87,7 +102,7 @@ public class NewMain {
 	private ArrayList<String> fetchWordsFromFile() {
 		ArrayList<String> allWordsList = new ArrayList<>();
 		try {
-			FileInputStream fstream = new FileInputStream(INPUT_PATH+input);
+			FileInputStream fstream = new FileInputStream(inputAbsolute);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
@@ -130,8 +145,7 @@ public class NewMain {
 		}
 	}
 
-	private void setUpProperties(){
-		input = pr.getProperty(FILE_INPUT);
-		output = pr.getProperty(FILE_OUTPUT);
+	private void setFileNamesFromProperties(){
+		inputFileName = pr.getProperty(FILE_INPUT_PROPERTY);
 	}
 }
